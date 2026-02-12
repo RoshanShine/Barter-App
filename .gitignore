@@ -1,0 +1,32 @@
+env/
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+
+# Database
+*.sqlite3
+
+# Static/Media
+staticfiles/
+media/
+
+# Environments
+.env
+.venv
