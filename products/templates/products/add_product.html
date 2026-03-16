@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add Product - SwapHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .form-card {
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5 mb-5" style="max-width: 750px;">
+  <a href="/" class="btn btn-outline-secondary mb-4 rounded-pill">← Back to Home</a>
+
+  <div class="card shadow-lg border-0 form-card">
+    <div class="card-body p-4 p-md-5">
+      <h2 class="fw-bold mb-4 text-center">Add New Product</h2>
+
+      {% if form.errors %}
+        <div class="alert alert-danger">
+          <strong>Please fix the errors below.</strong>
+        </div>
+      {% endif %}
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Product Name</label>
+          {{ form.name }}
+          <div class="text-danger small">{{ form.name.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Product Description</label>
+          {{ form.description }}
+          <div class="text-danger small">{{ form.description.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Product Image</label>
+          {{ form.image }}
+          <div class="text-danger small">{{ form.image.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Location</label>
+          {{ form.location }}
+          <div class="text-danger small">{{ form.location.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Condition</label>
+          {{ form.condition }}
+          <div class="text-danger small">{{ form.condition.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Phone Number</label>
+          {{ form.phone }}
+          <div class="text-danger small">{{ form.phone.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category</label>
+          {{ form.category }}
+          <div class="text-danger small">{{ form.category.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Exchange Type</label>
+          {{ form.exchange_type }}
+          <div class="text-danger small">{{ form.exchange_type.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Price</label>
+          {{ form.price }}
+          <div class="text-danger small">{{ form.price.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Barter Description</label>
+          {{ form.barter_description }}
+          <div class="text-danger small">{{ form.barter_description.errors }}</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 rounded-pill">
+          Add Product
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

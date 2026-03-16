@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SwapHub - Barter & Trade</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f3f4f6;
+      font-family: Arial, sans-serif;
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .search-box {
+      max-width: 460px;
+      width: 100%;
+    }
+
+    .category-chip {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      padding: 7px 16px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 15px;
+      display: inline-block;
+    }
+
+    .category-chip:hover,
+    .category-chip.active {
+      background-color: #0d6efd;
+      color: #fff;
+      border-color: #0d6efd;
+    }
+
+    .product-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+      transition: 0.2s ease;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #f8f9fa;
+    }
+
+    .product-body {
+      padding: 14px;
+    }
+
+    .product-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      min-height: 44px;
+    }
+
+    .product-location {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .owner-text {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 0;
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .view-btn {
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 8px 12px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .top-space {
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">SwapHub</a>
+
+    <form method="GET" action="/" class="d-flex mx-lg-4 flex-grow-1 search-box">
+      <input
+        type="search"
+        name="q"
+        class="form-control rounded-pill me-2"
+        placeholder="Search products or location"
+        value="{{ query }}"
+      >
+      {% if selected_category %}
+        <input type="hidden" name="category" value="{{ selected_category }}">
+      {% endif %}
+      <button type="submit" class="btn btn-light rounded-pill px-4">
+        Search
+      </button>
+    </form>
+
+    <div class="d-flex align-items-center ms-lg-3 mt-3 mt-lg-0">
+      {% if user.is_authenticated %}
+        <span class="text-white me-3">Hi, {{ user.username }}</span>
+
+        <form method="post" action="{% url 'logout' %}" class="d-inline me-2">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-light">Logout</button>
+        </form>
+      {% else %}
+        <a href="/login/" class="btn btn-light me-2">Login</a>
+        <a href="/register/" class="btn btn-outline-light me-2">Register</a>
+      {% endif %}
+
+      <a href="/add/" class="btn btn-warning fw-bold">
+        + Add Product
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container top-space">
+
+  <!-- Categories -->
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="/" class="category-chip {% if not selected_category %}active{% endif %}">All</a>
+    <a href="/?category=mobiles" class="category-chip {% if selected_category == 'mobiles' %}active{% endif %}">Mobiles</a>
+    <a href="/?category=electronics" class="category-chip {% if selected_category == 'electronics' %}active{% endif %}">Electronics</a>
+    <a href="/?category=furniture" class="category-chip {% if selected_category == 'furniture' %}active{% endif %}">Furniture</a>
+    <a href="/?category=vehicles" class="category-chip {% if selected_category == 'vehicles' %}active{% endif %}">Vehicles</a>
+    <a href="/?category=appliances" class="category-chip {% if selected_category == 'appliances' %}active{% endif %}">Appliances</a>
+    <a href="/?category=books" class="category-chip {% if selected_category == 'books' %}active{% endif %}">Books</a>
+    <a href="/?category=fashion" class="category-chip {% if selected_category == 'fashion' %}active{% endif %}">Fashion</a>
+  </div>
+
+  <h2 class="section-title mb-4">Latest Products</h2>
+
+  {% if products %}
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <div class="product-card h-100">
+
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+              <img src="https://via.placeholder.com/400x220?text=No+Image" alt="No Image" class="product-image">
+            {% endif %}
+
+            <div class="product-body">
+              <h5 class="product-title">{{ product.name }}</h5>
+
+              <p class="product-location">📍 {{ product.location }}</p>
+
+              <div class="mb-2">
+                <span class="badge bg-success">
+                  {{ product.get_exchange_type_display }}
+                </span>
+
+                {% if product.price %}
+                  <span class="badge bg-dark ms-1">
+                    ₹{{ product.price }}
+                  </span>
+                {% endif %}
+              </div>
+
+              <p class="owner-text">Owner: {{ product.user.username }}</p>
+
+              <div class="mt-3">
+                <a href="/product/{{ product.id }}/"
+                   class="btn btn-outline-primary w-100 view-btn">
+                  View Details
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center">
+      No products found.
+    </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
