@@ -1,104 +1,123 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Add Product - SwapHub</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .form-card {
-      border-radius: 20px;
-    }
-  </style>
-</head>
-<body>
+{% extends "base.html" %}
 
-<div class="container mt-5 mb-5" style="max-width: 750px;">
-  <a href="/" class="btn btn-outline-secondary mb-4 rounded-pill">← Back to Home</a>
+{% block title %}List New Item | SwapHub{% endblock %}
 
-  <div class="card shadow-lg border-0 form-card">
-    <div class="card-body p-4 p-md-5">
-      <h2 class="fw-bold mb-4 text-center">Add New Product</h2>
+{% block content %}
+<div class="animate-fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card overflow-hidden">
+                <div class="row g-0">
+                    <!-- Left Sidebar/Info -->
+                    <div class="col-lg-4 bg-primary bg-opacity-10 p-5 d-none d-lg-block border-end border-secondary border-opacity-25">
+                        <div class="d-flex flex-column h-100">
+                            <h2 class="display-6 fw-bold mb-4">Swap your <span class="text-accent">Items</span> easily.</h2>
+                            <p class="text-muted mb-5">Fill in the details to list your product. High-quality photos and clear descriptions lead to faster swaps.</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex align-items-center gap-3 mb-4">
+                                    <div class="bg-accent rounded-circle p-2 text-dark"><i class="fas fa-camera"></i></div>
+                                    <p class="mb-0 small fw-bold">Multiple Photos Supported</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-4">
+                                    <div class="bg-accent rounded-circle p-2 text-dark"><i class="fas fa-shield-alt"></i></div>
+                                    <p class="mb-0 small fw-bold">Verified Trades</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-      {% if form.errors %}
-        <div class="alert alert-danger">
-          <strong>Please fix the errors below.</strong>
+                    <!-- Form Side -->
+                    <div class="col-lg-8 p-5">
+                        <h3 class="fw-bold mb-5">Listing Details</h3>
+                        
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                                <div class="alert alert-danger glass-card border-0 mb-4">
+                                    <ul class="mb-0">
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <li>{{ field|title }}: {{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-4">
+                                <!-- Basic Info -->
+                                <div class="col-md-8">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Item Name</label>
+                                    {{ form.name }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Category</label>
+                                    {{ form.category }}
+                                </div>
+
+                                <!-- Images -->
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase text-accent">Main Cover Image</label>
+                                    {{ form.image }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Gallery (Optional)</label>
+                                    {{ form.more_images }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Description</label>
+                                    {{ form.description }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Location</label>
+                                    {{ form.location }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Condition</label>
+                                    {{ form.condition }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Phone Number</label>
+                                    {{ form.phone }}
+                                </div>
+
+                                <!-- Swap Logic -->
+                                <div class="col-12"><hr class="my-4 opacity-10"></div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Preferred Exchange</label>
+                                    {{ form.exchange_type }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Price (Optional)</label>
+                                    {{ form.price }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Barter Preferences</label>
+                                    {{ form.barter_description }}
+                                </div>
+
+                                <div class="col-12 mt-5">
+                                    <button type="submit" class="btn-premium w-100 py-3 fs-5">
+                                        <i class="fas fa-rocket me-2"></i>Publish Listing
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-      {% endif %}
-
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Product Name</label>
-          {{ form.name }}
-          <div class="text-danger small">{{ form.name.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Product Description</label>
-          {{ form.description }}
-          <div class="text-danger small">{{ form.description.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Product Image</label>
-          {{ form.image }}
-          <div class="text-danger small">{{ form.image.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Location</label>
-          {{ form.location }}
-          <div class="text-danger small">{{ form.location.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Condition</label>
-          {{ form.condition }}
-          <div class="text-danger small">{{ form.condition.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Phone Number</label>
-          {{ form.phone }}
-          <div class="text-danger small">{{ form.phone.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Category</label>
-          {{ form.category }}
-          <div class="text-danger small">{{ form.category.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Exchange Type</label>
-          {{ form.exchange_type }}
-          <div class="text-danger small">{{ form.exchange_type.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Price</label>
-          {{ form.price }}
-          <div class="text-danger small">{{ form.price.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Barter Description</label>
-          {{ form.barter_description }}
-          <div class="text-danger small">{{ form.barter_description.errors }}</div>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 rounded-pill">
-          Add Product
-        </button>
-      </form>
     </div>
-  </div>
 </div>
 
-</body>
-</html>
+<style>
+    .form-control::placeholder { color: rgba(255,255,255,0.3); }
+    .form-select option { background: #0f172a; color: white; }
+    .glass-card:focus { background: rgba(255,255,255,0.1); outline: none; box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+</style>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Make an Offer | SwapHub{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-5 d-none d-md-block">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                        {% else %}
+                            <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
+                                <i class="fas fa-image fs-1 text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-7 p-5">
+                        <h2 class="fw-bold mb-2">Propose a Trade</h2>
+                        <p class="text-muted mb-4">You are making an offer to <strong>@{{ product.user.username }}</strong> for <strong>{{ product.name }}</strong>.</p>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label class="form-label text-white fw-semibold small text-uppercase">Your Barter Message</label>
+                                <textarea name="message" class="form-control glass-card text-white border-0 p-4" rows="5" placeholder="Describe what you want to exchange or your proposal details..." required></textarea>
+                            </div>
+                            
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn-premium px-4 fs-5">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Offer
+                                </button>
+                                <a href="{% url 'product_detail' product.pk %}" class="btn btn-link text-muted text-decoration-none text-center">
+                                    Cancel and Return
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 p-4 glass-card border-accent border-opacity-25" style="border-style: dashed;">
+                <h6 class="text-accent fw-bold"><i class="fas fa-lightbulb me-2"></i>Barter Tip</h6>
+                <p class="text-muted small mb-0">Be specific about the condition of your item and why it's a fair trade. Good communication leads to successful swaps!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    textarea.glass-card:focus {
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        box-shadow: none;
+    }
+</style>
+{% endblock %}

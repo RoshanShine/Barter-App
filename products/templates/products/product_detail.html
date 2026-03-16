@@ -1,150 +1,139 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>{{ product.name }} - SwapHub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
+{% load static %}
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}{{ product.name }} | SwapHub Details{% endblock %}
 
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .product-card {
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .image-wrapper {
-      height: 420px;
-      background-color: #f1f3f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .product-image {
-      max-height: 100%;
-      max-width: 85%;
-      object-fit: contain;
-    }
-
-    .section-title {
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-
-    .info-box {
-      background: #ffffff;
-      border: 1px solid #e9ecef;
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-bottom: 14px;
-    }
-  </style>
-</head>
-<body>
-
-<div class="container mt-5 mb-5" style="max-width: 950px;">
-
-  <a href="/" class="btn btn-outline-secondary mb-4 rounded-pill">
-    ← Back to Home
-  </a>
-
-  <div class="card product-card shadow-lg border-0">
-
-    {% if product.image %}
-      <div class="image-wrapper">
-        <img src="{{ product.image.url }}"
-             alt="{{ product.name }}"
-             class="product-image">
-      </div>
-    {% endif %}
-
-    <div class="card-body p-4 p-md-5">
-
-      <h2 class="fw-bold mb-2">{{ product.name }}</h2>
-
-      <p class="text-muted mb-3">
-        📍 {{ product.location }}
-      </p>
-
-      <div class="mb-4">
-        <span class="badge bg-success fs-6">
-          {{ product.get_exchange_type_display }}
-        </span>
-
-        {% if product.price %}
-          <span class="badge bg-dark fs-6 ms-2">
-            ₹{{ product.price }}
-          </span>
+{% block content %}
+<div class="animate-fade-in py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none d-inline-block">
+            <i class="fas fa-arrow-left me-2"></i>Back to discovery
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'toggle_wishlist' product.pk %}" class="btn glass-card rounded-pill px-4 {% if is_in_wishlist %}text-danger{% else %}text-white{% endif %}">
+                <i class="{% if is_in_wishlist %}fas{% else %}far{% endif %} fa-heart me-2"></i>
+                {% if is_in_wishlist %}Saved{% else %}Save{% endif %}
+            </a>
         {% endif %}
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="info-box">
-            <h5 class="section-title">📄 Product Description</h5>
-            {% if description_lines %}
-              <ul class="list-group list-group-flush">
-                {% for line in description_lines %}
-                  {% if line %}
-                    <li class="list-group-item px-0">
-                      {{ line }}
-                    </li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted mb-0">No product description added.</p>
-            {% endif %}
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="info-box">
-            <h5 class="section-title">🔁 Barter / Exchange Details</h5>
-            {% if barter_lines %}
-              <ul class="list-group list-group-flush">
-                {% for line in barter_lines %}
-                  {% if line %}
-                    <li class="list-group-item px-0">
-                      {{ line }}
-                    </li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted mb-0">No barter details added.</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-
-      <div class="info-box">
-        <h5 class="section-title">ℹ️ Product Info</h5>
-        <p class="mb-2"><strong>Condition:</strong> {{ product.condition }}</p>
-        <p class="mb-2"><strong>Owner:</strong> {{ product.user.username }}</p>
-        <p class="mb-0"><strong>Phone:</strong> {{ product.phone }}</p>
-      </div>
-
-      {% if user.is_authenticated %}
-        <a href="tel:{{ product.phone }}" class="btn btn-primary rounded-pill w-100 mt-3">
-          Contact Owner
-        </a>
-      {% else %}
-        <a href="/login/?next=/product/{{ product.id }}/"
-           class="btn btn-outline-primary rounded-pill w-100 mt-3">
-          Login to Contact Owner
-        </a>
-      {% endif %}
-
     </div>
-  </div>
+
+    <div class="row g-5">
+        <!-- Image Section -->
+        <div class="col-lg-7">
+            <div class="glass-card p-2 overflow-hidden" style="height: 500px;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 rounded-4" style="object-fit: cover;">
+                {% else %}
+                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle rounded-4">
+                        <i class="fas fa-image fs-1 text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Gallery Placeholder (Future update) -->
+            <div class="row g-2 mt-2">
+                {% for img in product.images.all %}
+                <div class="col-3">
+                    <div class="glass-card p-1" style="height: 80px;">
+                        <img src="{{ img.image.url }}" class="w-100 h-100 rounded-2" style="object-fit: cover;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="col-lg-5">
+            <div class="glass-card p-5 h-100">
+                <div class="mb-4">
+                    <span class="badge bg-primary bg-opacity-25 text-accent border-accent border py-2 px-3 mb-3">
+                        {{ product.get_category_display }}
+                    </span>
+                    <h1 class="display-5 fw-bold mb-2">{{ product.name }}</h1>
+                    <p class="text-muted fs-5"><i class="fas fa-map-marker-alt me-2 text-accent"></i>{{ product.location }}</p>
+                </div>
+
+                <div class="d-flex align-items-baseline gap-3 mb-4">
+                    {% if product.price %}
+                        <span class="display-6 fw-bold text-accent">₹{{ product.price }}</span>
+                    {% endif %}
+                    <span class="badge bg-dark bg-opacity-50 py-2 px-3 border border-secondary">
+                        {{ product.get_exchange_type_display }}
+                    </span>
+                </div>
+
+                <!-- Owner Card -->
+                <a href="{% url 'profile_view' product.user.username %}" class="text-decoration-none">
+                    <div class="p-3 mb-5 glass-card d-flex align-items-center gap-3 border-accent border-opacity-10 hover-scale">
+                        <div class="rounded-circle overflow-hidden" style="width: 50px; height: 50px;">
+                            {% if product.user.profile.avatar %}
+                                <img src="{{ product.user.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h6 class="text-white fw-bold mb-0">@{{ product.user.username }}</h6>
+                            <div class="small text-warning">
+                                <i class="fas fa-star me-1"></i>{{ product.user.profile.average_rating|floatformat:1 }} Trader Rating
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right ms-auto text-muted"></i>
+                    </div>
+                </a>
+
+                <div class="info-grid mb-5">
+                    <div class="mb-4">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-2">Description</h6>
+                        <p class="lead">{{ product.description|linebreaks }}</p>
+                    </div>
+                    
+                    {% if product.barter_description %}
+                    <div class="mb-4 p-4 glass-card shadow-sm" style="background: rgba(34, 211, 238, 0.05); border-color: rgba(34, 211, 238, 0.2);">
+                        <h6 class="text-accent text-uppercase small fw-bold mb-2"><i class="fas fa-exchange-alt me-2"></i>Barter Preferences</h6>
+                        <p class="mb-0">{{ product.barter_description|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Condition</h6>
+                            <p class="fw-semibold">{{ product.condition }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    {% if user.is_authenticated %}
+                        {% if product.user != user %}
+                            <a href="tel:{{ product.phone }}" class="btn-premium text-center fs-5">
+                                <i class="fas fa-phone-alt me-2"></i>Contact Owner
+                            </a>
+                            <a href="{% url 'make_offer' product.pk %}" class="btn btn-outline-light rounded-pill py-3 border-secondary fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i>Make an Offer
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline-secondary rounded-pill py-3 border-secondary fw-bold" disabled>
+                                This is your listing
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn-premium text-center fs-5">
+                            Login to Contact
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<style>
+    .text-accent { color: var(--accent) !important; }
+    .border-accent { border-color: var(--accent) !important; }
+    .hover-scale { transition: transform 0.3s ease; }
+    .hover-scale:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
+</style>
+{% endblock %}

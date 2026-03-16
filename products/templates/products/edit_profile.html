@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile | SwapHub{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="glass-card p-5">
+                <h2 class="fw-bold mb-4">User Settings</h2>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="text-center mb-5">
+                        <div class="position-relative d-inline-block">
+                            <div class="rounded-circle overflow-hidden border border-accent" style="width: 120px; height: 120px;">
+                                {% if profile.avatar %}
+                                    <img src="{{ profile.avatar.url }}" id="avatarPreview" class="w-100 h-100" style="object-fit: cover;">
+                                {% else %}
+                                    <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-camera fs-3 text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-accent rounded-circle p-2 cursor-pointer shadow">
+                                <i class="fas fa-pen text-dark small"></i>
+                            </label>
+                            <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/*">
+                        </div>
+                        <p class="text-muted small mt-2">Click to update avatar</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-white fw-semibold small text-uppercase">Public Bio</label>
+                        <textarea name="bio" class="form-control glass-card text-white border-0 p-4" rows="4" placeholder="Tell the community about what you usually trade...">{{ profile.bio }}</textarea>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn-premium px-4 fs-5">Save Changes</button>
+                        <a href="{% url 'profile_view' user.username %}" class="btn btn-link text-muted text-decoration-none text-center">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('avatarInput').onchange = evt => {
+        const [file] = avatarInput.files
+        if (file) {
+            document.getElementById('avatarPreview').src = URL.createObjectURL(file)
+        }
+    }
+</script>
+{% endblock %}
