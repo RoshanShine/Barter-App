@@ -4,12 +4,12 @@
 {% block content %}
 <div class="animate-fade-in">
     <!-- Hero Section -->
-    <header class="text-center py-5 mb-5 glass-card" style="background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1556742044-3c52d6e88c62?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); background-size: cover; background-position: center;">
-        <h1 class="display-3 fw-bold mb-3" style="letter-spacing: -1px;">Swap Items. <span style="color: var(--accent);">Build Community.</span></h1>
-        <p class="lead text-muted mb-4 fs-4">The future of exchange is decentralized and community-driven.</p>
+    <header class="text-center py-5 mb-5 glass-card" style="background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1556742044-3c52d6e88c62?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); background-size: cover; background-position: center; border: none;">
+        <h1 class="display-3 fw-bold mb-3" style="letter-spacing: -1px;">Swap Items. <span style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Build Community.</span></h1>
+        <p class="lead text-white-50 mb-4 fs-4">The future of exchange is decentralized and community-driven.</p>
         <div class="d-flex justify-content-center gap-3">
             <a href="{% url 'add_product' %}" class="btn-premium fs-5 px-5">Start Swapping</a>
-            <a href="#discover" class="btn btn-outline-light rounded-pill px-5 border-secondary">Learn More</a>
+            <a href="#discover" class="btn glass-card rounded-pill px-5 border-secondary text-white text-decoration-none d-flex align-items-center">Explore More</a>
         </div>
     </header>
 
@@ -19,7 +19,7 @@
             <a href="{% url 'home' %}" class="glass-card px-4 py-2 text-decoration-none cat-btn {% if not selected_category %}active{% endif %}">
                 All Items
             </a>
-            {% for cat_val, cat_name in products.0.CATEGORY_CHOICES %}
+            {% for cat_val, cat_name in categories %}
                 <a href="{% url 'home' %}?category={{ cat_val }}" class="glass-card px-4 py-2 text-decoration-none cat-btn {% if selected_category == cat_val %}active{% endif %}">
                     {{ cat_name }}
                 </a>
@@ -32,22 +32,22 @@
         {% if products %}
             {% for product in products %}
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                    <div class="glass-card h-100 overflow-hidden d-flex flex-column">
+                    <div class="glass-card h-100 overflow-hidden d-flex flex-column hover-slide-up">
                         <div class="position-relative overflow-hidden" style="height: 200px;">
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100" style="object-fit: cover; transition: transform 0.5s ease;">
                             {% else %}
-                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle">
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle bg-opacity-10">
                                     <i class="fas fa-image fs-1 text-muted"></i>
                                 </div>
                             {% endif %}
                             <div class="position-absolute top-0 start-0 m-3" style="z-index: 10;">
-                                <a href="{% url 'toggle_wishlist' product.pk %}" class="btn glass-card p-2 rounded-circle border-0 text-white hover-scale">
+                                <a href="{% url 'toggle_wishlist' product.pk %}" class="btn glass-card p-2 rounded-circle border-0 text-white hover-scale d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; background: rgba(15, 23, 42, 0.5);">
                                     <i class="far fa-heart"></i>
                                 </a>
                             </div>
                             <div class="position-absolute top-0 end-0 m-3">
-                                <span class="badge bg-dark bg-opacity-75 glass-card border-0 py-2 px-3">
+                                <span class="badge glass-card border-0 py-2 px-3 small" style="background: var(--primary-gradient);">
                                     {{ product.get_exchange_type_display }}
                                 </span>
                             </div>
@@ -65,8 +65,8 @@
                                         <span class="text-muted small">Barter Only</span>
                                     {% endif %}
                                 </div>
-                                <a href="{% url 'product_detail' product.id %}" class="btn-premium py-2 px-3">
-                                    Details
+                                <a href="{% url 'product_detail' product.id %}" class="btn-premium py-2 px-3 small">
+                                    View Details
                                 </a>
                             </div>
                         </div>
@@ -74,11 +74,12 @@
                 </div>
             {% endfor %}
         {% else %}
-            <div class="col-12">
-                <div class="glass-card text-center py-5">
+            <div class="col-12 text-center py-5">
+                <div class="glass-card py-5">
                     <i class="fas fa-search fs-1 mb-3 text-muted"></i>
                     <h3>No items found</h3>
                     <p class="text-muted">Try adjusting your filters or search query.</p>
+                    <a href="{% url 'home' %}" class="btn-premium mt-3">Reset Filters</a>
                 </div>
             </div>
         {% endif %}
@@ -86,11 +87,9 @@
 </div>
 
 <style>
-    .border-accent { border-color: var(--accent) !important; }
-    .text-accent { color: var(--accent) !important; }
     .glass-card:hover img { transform: scale(1.1); }
-    .cat-btn { color: var(--text-muted); transition: all 0.3s ease; white-space: nowrap; }
-    .cat-btn.active { border-color: var(--accent) !important; color: var(--accent) !important; font-weight: bold; }
-    .cat-btn:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; }
+    .cat-btn { color: var(--text-muted); transition: all 0.3s ease; white-space: nowrap; border-radius: 99px; font-size: 0.9rem; border-color: rgba(255,255,255,0.05); }
+    .cat-btn.active { background: var(--primary-gradient); color: white !important; border-color: transparent !important; font-weight: 600; }
+    .cat-btn:hover:not(.active) { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2); }
 </style>
 {% endblock %}

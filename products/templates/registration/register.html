@@ -1,41 +1,76 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Register - SwapHub</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends 'base.html' %}
+{% load static %}
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body p-4">
-          <h3 class="fw-bold text-center mb-4">Create Account</h3>
+{% block title %}Join SwapHub | Experience Premium Barter{% endblock %}
 
-          <form method="POST">
+{% block extra_css %}
+<style>
+    /* Styling Django built-in form p tags for glass design */
+    form p {
+        margin-bottom: 1.5rem;
+    }
+    form p label {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    form p input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    form p input:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.1);
+    }
+    .helptext {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+        opacity: 0.7;
+    }
+    ul.errorlist {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 1rem;
+        color: #f87171;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="bg-mesh"></div>
+    <div class="glass-card auth-card animate-fade-in" style="max-width: 500px;">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Create Account</h2>
+            <p class="text-muted small">Join our elite community of swappers</p>
+        </div>
+
+        <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
 
-            <button type="submit" class="btn btn-primary w-100 rounded-pill">
-              Register
+            <button type="submit" class="btn-premium w-100 mt-4 py-3">
+                Register Now <i class="fas fa-rocket ms-2 small"></i>
             </button>
-          </form>
+        </form>
 
-          <div class="text-center mt-3">
-            <a href="/login/" class="text-decoration-none">Already have an account? Login</a>
-          </div>
-
-          <div class="text-center mt-2">
-            <a href="/" class="text-decoration-none">← Back to Home</a>
-          </div>
+        <div class="text-center mt-5 pt-3 border-top border-secondary border-opacity-10">
+            <p class="text-muted small">Already a member? <a href="{% url 'login' %}" class="text-accent text-decoration-none hover-accent fw-semibold">Sign In</a></p>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

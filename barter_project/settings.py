@@ -25,8 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_mongodb_backend',
+    'users',
     'products',
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,10 +62,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'barter_project.wsgi.application'
 
+import certifi
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django_mongodb_backend',
+        'NAME': 'barter_db',
+        'HOST': 'mongodb+srv://roshan10:Roshan12345@cluster0.qqmc8nf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+        'CLIENT': {
+            'tlsCAFile': certifi.where(),
+        }
     }
 }
 
@@ -94,4 +104,4 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django_mongodb_backend.fields.ObjectIdAutoField'

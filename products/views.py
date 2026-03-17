@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.db.models import Q, Avg
 from django.contrib import messages
-from django.contrib.auth.models import User
+from users.forms import CustomUserCreationForm
 
-from .models import Product, Offer, Profile, Rating, Wishlist
+User = get_user_model()
+
+from .models import Product, ProductImage, Offer, Profile, Rating, Wishlist
 from .forms import ProductForm
 
 
@@ -15,6 +16,9 @@ def home(request):
     category = request.GET.get('category', '')
 
     products = Product.objects.all().order_by('-id')
+    
+    if not request.user.is_staff:
+        products = products.filter(is_approved=True)
 
     if query:
         products = products.filter(
@@ -32,10 +36,15 @@ def home(request):
         'products': products,
         'query': query,
         'selected_category': category,
+        'categories': Product.CATEGORY_CHOICES,
     })
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
+    
+    if not product.is_approved and not request.user.is_staff and product.user != request.user:
+        messages.error(request, "This product is pending approval and is not publicly visible.")
+        return redirect('home')
 
     description_lines = product.description.split('\n') if product.description else []
     barter_lines = product.barter_description.split('\n') if product.barter_description else []
@@ -97,6 +106,8 @@ def make_offer(request, pk):
             )
             messages.success(request, "Your offer has been sent!")
             return redirect('product_detail', pk=pk)
+        else:
+            messages.error(request, "Offer message cannot be empty.")
             
     return render(request, 'products/make_offer.html', {'product': product})
 
@@ -173,10 +184,14 @@ def rate_user(request, username):
         score = request.POST.get('score')
         comment = request.POST.get('comment')
         
+        if not score or not score.isdigit() or not (1 <= int(score) <= 5):
+            messages.error(request, "Please provide a valid rating score between 1 and 5.")
+            return redirect('rate_user', username=username)
+
         Rating.objects.update_or_create(
             rater=request.user,
             rated_user=rated_user,
-            defaults={'score': score, 'comment': comment}
+            defaults={'score': int(score), 'comment': comment or ''}
         )
         messages.success(request, f"Rating submitted for {username}!")
         return redirect('profile_view', username=username)
@@ -200,12 +215,12 @@ def toggle_wishlist(request, pk):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('home')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     return render(request, 'registration/register.html', {'form': form})

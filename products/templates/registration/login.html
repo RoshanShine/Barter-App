@@ -1,61 +1,54 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login - SwapHub</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends 'base.html' %}
+{% load static %}
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body p-4">
-          <h3 class="fw-bold text-center mb-4">Login to SwapHub</h3>
+{% block title %}Login | SwapHub Premium{% endblock %}
 
-          {% if form.errors %}
-            <div class="alert alert-danger">
-              Invalid username or password.
+{% block content %}
+<div class="auth-container">
+    <div class="bg-mesh"></div>
+    <div class="glass-card auth-card animate-fade-in">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Welcome Back</h2>
+            <p class="text-muted small">Continue your premium barter journey</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert glass-card border-0 text-danger small mb-4 py-2 text-center" style="background: rgba(220, 38, 38, 0.1);">
+                <i class="fas fa-exclamation-circle me-2"></i>Invalid username or password.
             </div>
-          {% endif %}
+        {% endif %}
 
-          <form method="POST">
+        <form method="POST">
             {% csrf_token %}
 
-            <div class="mb-3">
-              <label class="form-label">Username</label>
-              <input type="text" name="username" class="form-control" required>
+            <div class="mb-4">
+                <label class="glass-label">Username</label>
+                <div class="position-relative">
+                    <i class="fas fa-user position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" name="username" class="glass-input w-100 ps-5" placeholder="Enter your username" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input type="password" name="password" class="form-control" required>
+            <div class="mb-4">
+                <label class="glass-label">Password</label>
+                <div class="position-relative">
+                    <i class="fas fa-lock position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="password" name="password" class="glass-input w-100 ps-5" placeholder="••••••••" required>
+                </div>
             </div>
 
             {% if next %}
-              <input type="hidden" name="next" value="{{ next }}">
+                <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
 
-            <button type="submit" class="btn btn-primary w-100 rounded-pill">
-              Login
+            <button type="submit" class="btn-premium w-100 mt-2 py-3">
+                Sign In <i class="fas fa-arrow-right ms-2 small"></i>
             </button>
-          </form>
+        </form>
 
-          <div class="text-center mt-3">
-            <a href="/register/" class="text-decoration-none">Create a new account</a>
-          </div>
-
-          <div class="text-center mt-2">
-            <a href="/" class="text-decoration-none">← Back to Home</a>
-          </div>
-
+        <div class="text-center mt-5 pt-3 border-top border-secondary border-opacity-10">
+            <p class="text-muted small">New to SwapHub? <a href="{% url 'register' %}" class="text-accent text-decoration-none hover-accent fw-semibold">Create Account</a></p>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
-</body>
-</html>
+{% endblock %}
