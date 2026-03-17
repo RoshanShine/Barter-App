@@ -11,10 +11,14 @@ urlpatterns = [
     path('make-offer/<str:pk>/', views.make_offer, name='make_offer'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('handle-offer/<str:pk>/<action>/', views.handle_offer, name='handle_offer'),
+    path('product/<str:pk>/edit/', views.edit_product, name='edit_product'),
+    path('product/<str:pk>/delete/', views.delete_product, name='delete_product'),
 
     # Profile & Trust
     path('profile/<str:username>/', views.profile_view, name='profile_view'),
     path('profile-edit/', views.edit_profile, name='edit_profile'),
+    path('profile-edit/security/', views.change_password, name='change_password'),
+    path('profile-edit/notifications/', views.settings_notifications, name='settings_notifications'),
     path('rate/<str:username>/', views.rate_user, name='rate_user'),
     path('wishlist-toggle/<str:pk>/', views.toggle_wishlist, name='toggle_wishlist'),
 

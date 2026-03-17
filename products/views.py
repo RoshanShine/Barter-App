@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import login, get_user_model, authenticate, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Q, Avg
 from django.contrib import messages
 from users.forms import CustomUserCreationForm
@@ -117,11 +118,13 @@ def dashboard(request):
     received_offers = Offer.objects.filter(product__user=request.user).order_by('-created_at')
     sent_offers = Offer.objects.filter(sender=request.user).order_by('-created_at')
     wishlist_items = Wishlist.objects.filter(user=request.user)
+    my_products = Product.objects.filter(user=request.user).order_by('-id')
     
     return render(request, 'products/dashboard.html', {
         'received_offers': received_offers,
         'sent_offers': sent_offers,
-        'wishlist_items': wishlist_items
+        'wishlist_items': wishlist_items,
+        'my_products': my_products
     })
 
 
@@ -157,20 +160,51 @@ def profile_view(request, username):
 
 @login_required
 def edit_profile(request):
+    from .forms import UserUpdateForm, ProfileForm
+    
     profile, created = Profile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
-        bio = request.POST.get('bio')
-        avatar = request.FILES.get('avatar')
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileForm(request.POST, request.FILES, instance=profile)
         
-        profile.bio = bio
-        if avatar:
-            profile.avatar = avatar
-        profile.save()
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, "Your profile has been updated!")
+            return redirect('profile_view', username=request.user.username)
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileForm(instance=profile)
         
-        messages.success(request, "Profile updated successfully!")
-        return redirect('profile_view', username=request.user.username)
-        
-    return render(request, 'products/edit_profile.html', {'profile': profile})
+    return render(request, 'products/edit_profile.html', {
+        'u_form': u_form,
+        'p_form': p_form,
+        'profile': profile
+    })
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('edit_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'products/change_password.html', {
+        'form': form
+    })
+
+
+@login_required
+def settings_notifications(request):
+    return render(request, 'products/settings_notifications.html')
 
 
 @login_required
@@ -211,6 +245,54 @@ def toggle_wishlist(request, pk):
         messages.success(request, "Added to wishlist.")
         
     return redirect('product_detail', pk=pk)
+
+
+@login_required
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    # Permission check: Only owner or staff can edit
+    if product.user != request.user and not request.user.is_staff:
+        messages.error(request, "You don't have permission to edit this product.")
+        return redirect('home')
+        
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            product = form.save(commit=False)
+            # Reset approval on edit for safety
+            if not request.user.is_staff:
+                product.is_approved = False
+                messages.info(request, "Listing updated and sent for re-approval.")
+            else:
+                messages.success(request, "Product updated successfully.")
+            
+            product.save()
+            return redirect('product_detail', pk=product.pk)
+    else:
+        form = ProductForm(instance=product)
+        
+    return render(request, 'products/edit_product.html', {
+        'form': form,
+        'product': product
+    })
+
+
+@login_required
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    # Permission check: Only owner or staff can delete
+    if product.user != request.user and not request.user.is_staff:
+        messages.error(request, "You don't have permission to delete this product.")
+        return redirect('home')
+        
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, "Product deleted successfully.")
+        return redirect('dashboard')
+        
+    return render(request, 'products/delete_confirm.html', {'product': product})
 
 
 def register(request):

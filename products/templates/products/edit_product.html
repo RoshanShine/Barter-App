@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Listing | SwapHub{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card overflow-hidden">
+                <div class="row g-0">
+                    <!-- Left Sidebar/Info -->
+                    <div class="col-lg-4 bg-primary bg-opacity-10 p-5 d-none d-lg-block border-end border-secondary border-opacity-25">
+                        <div class="d-flex flex-column h-100">
+                            <h2 class="display-6 fw-bold mb-4">Update your <span class="text-accent">Listing</span>.</h2>
+                            <p class="text-muted mb-5">Refine your product details. Remember that significant changes will require a quick re-approval from our moderators.</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex align-items-center gap-3 mb-4">
+                                    <div class="bg-accent rounded-circle p-2 text-dark"><i class="fas fa-edit"></i></div>
+                                    <p class="mb-0 small fw-bold">Keep Details Current</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-4">
+                                    <div class="bg-accent rounded-circle p-2 text-dark"><i class="fas fa-history"></i></div>
+                                    <p class="mb-0 small fw-bold">Maintain Transparency</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Side -->
+                    <div class="col-lg-8 p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h3 class="fw-bold mb-0">Edit Details</h3>
+                            <a href="{% url 'product_detail' product.pk %}" class="btn glass-card border-0 text-muted small"><i class="fas fa-times me-2"></i>Cancel</a>
+                        </div>
+                        
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                                <div class="alert alert-danger glass-card border-0 mb-4">
+                                    <ul class="mb-0">
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <li>{{ field|title }}: {{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-4">
+                                <!-- Basic Info -->
+                                <div class="col-md-8">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Item Name</label>
+                                    {{ form.name }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Category</label>
+                                    {{ form.category }}
+                                </div>
+
+                                <!-- Images -->
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase text-accent">Main Cover Image</label>
+                                    <div class="mb-2">
+                                        {% if product.image %}
+                                            <p class="small text-muted mb-1">Current Image:</p>
+                                            <img src="{{ product.image.url }}" class="rounded mb-2" style="height: 50px; object-fit: cover;">
+                                        {% endif %}
+                                    </div>
+                                    {{ form.image }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Gallery (Optional)</label>
+                                    {{ form.more_images }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Description</label>
+                                    {{ form.description }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Location</label>
+                                    {{ form.location }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Condition</label>
+                                    {{ form.condition }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Phone Number</label>
+                                    {{ form.phone }}
+                                </div>
+
+                                <!-- Swap Logic -->
+                                <div class="col-12"><hr class="my-4 opacity-10"></div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Preferred Exchange</label>
+                                    {{ form.exchange_type }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Price (Optional)</label>
+                                    {{ form.price }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold small text-uppercase">Barter Preferences</label>
+                                    {{ form.barter_description }}
+                                </div>
+
+                                <div class="col-12 mt-5">
+                                    <button type="submit" class="btn-premium w-100 py-3 fs-5">
+                                        <i class="fas fa-save me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control::placeholder { color: rgba(255,255,255,0.3); }
+    .form-select option { background: #0f172a; color: white; }
+    .glass-card:focus { background: rgba(255,255,255,0.1); outline: none; box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+</style>
+{% endblock %}

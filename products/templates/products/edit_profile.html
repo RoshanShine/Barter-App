@@ -1,56 +1,107 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Profile | SwapHub{% endblock %}
+{% block title %}Account Settings | SwapHub{% endblock %}
 
 {% block content %}
 <div class="animate-fade-in py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="glass-card p-5">
-                <h2 class="fw-bold mb-4">User Settings</h2>
-                
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    
-                    <div class="text-center mb-5">
-                        <div class="position-relative d-inline-block">
-                            <div class="rounded-circle overflow-hidden border border-accent" style="width: 120px; height: 120px;">
-                                {% if profile.avatar %}
-                                    <img src="{{ profile.avatar.url }}" id="avatarPreview" class="w-100 h-100" style="object-fit: cover;">
-                                {% else %}
-                                    <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-camera fs-3 text-muted"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-accent rounded-circle p-2 cursor-pointer shadow">
-                                <i class="fas fa-pen text-dark small"></i>
-                            </label>
-                            <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/*">
+        <div class="col-lg-10">
+            <div class="glass-card p-0 overflow-hidden">
+                <div class="row g-0">
+                    <!-- Sidebar Nav -->
+                    <div class="col-md-3 bg-primary bg-opacity-10 p-4 border-end border-secondary border-opacity-25">
+                        <div class="d-flex flex-column gap-3">
+                            <h5 class="fw-bold mb-4 px-2">Settings</h5>
+                            <a href="{% url 'edit_profile' %}" class="btn glass-card text-start border-0 text-accent fw-bold"><i class="fas fa-user-circle me-3"></i>Profile Info</a>
+                            <a href="{% url 'change_password' %}" class="btn glass-card text-start border-0 text-white-50"><i class="fas fa-shield-alt me-3"></i>Security</a>
+                            <a href="{% url 'settings_notifications' %}" class="btn glass-card text-start border-0 text-white-50"><i class="fas fa-bell me-3"></i>Notifications</a>
                         </div>
-                        <p class="text-muted small mt-2">Click to update avatar</p>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label text-white fw-semibold small text-uppercase">Public Bio</label>
-                        <textarea name="bio" class="form-control glass-card text-white border-0 p-4" rows="4" placeholder="Tell the community about what you usually trade...">{{ profile.bio }}</textarea>
-                    </div>
+                    <!-- Main Form Area -->
+                    <div class="col-md-9 p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h2 class="fw-bold mb-0">Edit Profile</h2>
+                            <a href="{% url 'profile_view' user.username %}" class="btn glass-card border-0 text-muted"><i class="fas fa-arrow-left me-2"></i>Public Profile</a>
+                        </div>
 
-                    <div class="d-grid gap-3">
-                        <button type="submit" class="btn-premium px-4 fs-5">Save Changes</button>
-                        <a href="{% url 'profile_view' user.username %}" class="btn btn-link text-muted text-decoration-none text-center">Cancel</a>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <!-- Avatar Section -->
+                            <div class="mb-5 d-flex align-items-center gap-4">
+                                <div class="position-relative">
+                                    <div class="rounded-circle overflow-hidden border border-accent border-2" style="width: 100px; height: 100px; background: rgba(255,255,255,0.05);">
+                                        {% if profile.avatar %}
+                                            <img src="{{ profile.avatar.url }}" id="avatarPreview" class="w-100 h-100" style="object-fit: cover;">
+                                        {% else %}
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center" id="avatarPreviewContainer">
+                                                <i class="fas fa-user fs-2 text-muted"></i>
+                                            </div>
+                                            <img src="" id="avatarPreview" class="w-100 h-100 d-none" style="object-fit: cover;">
+                                        {% endif %}
+                                    </div>
+                                    <label for="id_avatar" class="position-absolute bottom-0 end-0 bg-accent rounded-circle p-2 cursor-pointer shadow-lg hover-scale" title="Change Avatar">
+                                        <i class="fas fa-camera text-dark small"></i>
+                                    </label>
+                                    <div class="d-none">{{ p_form.avatar }}</div>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Profile Photo</h5>
+                                    <p class="text-muted small mb-0">Recommended size: 500x500px. formats: JPG, PNG.</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Personal Info Section -->
+                                <div class="col-12"><h6 class="text-accent text-uppercase small fw-bold mb-0">Basic Information</h6></div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white-50 fw-semibold small text-uppercase">First Name</label>
+                                    {{ u_form.first_name }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white-50 fw-semibold small text-uppercase">Last Name</label>
+                                    {{ u_form.last_name }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-white-50 fw-semibold small text-uppercase">Email Address</label>
+                                    {{ u_form.email }}
+                                </div>
+
+                                <!-- Profile Info Section -->
+                                <div class="col-12 mt-5"><h6 class="text-accent text-uppercase small fw-bold mb-0">About You</h6></div>
+                                <div class="col-12">
+                                    <label class="form-label text-white-50 fw-semibold small text-uppercase">Public Bio</label>
+                                    {{ p_form.bio }}
+                                    <div class="form-text text-muted small mt-2">Personalize your profile with a short bio.</div>
+                                </div>
+
+                                <div class="col-12 mt-5">
+                                    <hr class="opacity-10 mb-4">
+                                    <div class="d-flex gap-3 justify-content-end">
+                                        <a href="{% url 'profile_view' user.username %}" class="btn glass-card border-0 px-4 py-3">Cancel</a>
+                                        <button type="submit" class="btn-premium px-5 py-3 fs-5 fw-bold">Save All Changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('avatarInput').onchange = evt => {
-        const [file] = avatarInput.files
+    document.getElementById('id_avatar').onchange = function(evt) {
+        const [file] = evt.target.files
         if (file) {
-            document.getElementById('avatarPreview').src = URL.createObjectURL(file)
+            const preview = document.getElementById('avatarPreview');
+            const placeholder = document.getElementById('avatarPreviewContainer');
+            preview.src = URL.createObjectURL(file);
+            preview.classList.remove('d-none');
+            if (placeholder) placeholder.classList.add('d-none');
         }
     }
 </script>

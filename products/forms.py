@@ -1,5 +1,8 @@
 from django import forms
-from .models import Product
+from .models import Product, Profile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class MultipleFileInput(forms.FileInput):
     allow_multiple_selected = True
@@ -39,4 +42,23 @@ class ProductForm(forms.ModelForm):
             'exchange_type': forms.Select(attrs={'class': 'form-select glass-card text-white border-0 p-3'}),
             'price': forms.NumberInput(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'placeholder': 'Optional price...'}),
             'barter_description': forms.Textarea(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'rows': 4, 'placeholder': 'What are you looking for in return?'}),
+        }
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'placeholder': 'Last Name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'placeholder': 'Email Address'}),
+        }
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'avatar']
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control glass-card text-white border-0 p-3', 'rows': 4, 'placeholder': 'Tell us about yourself...'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control glass-card text-white border-0 p-3'}),
         }

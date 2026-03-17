@@ -3,109 +3,160 @@
 {% block title %}{{ profile_user.username }}'s Profile | SwapHub{% endblock %}
 
 {% block content %}
-<div class="animate-fade-in py-4">
-    <div class="row g-4">
-        <!-- Profile Header -->
+<div class="animate-fade-in py-5">
+    <div class="bg-mesh"></div>
+    
+    <div class="row g-5">
+        <!-- Sidebar: User Info -->
         <div class="col-lg-4">
-            <div class="glass-card p-5 text-center">
+            <div class="glass-card p-5 text-center position-sticky" style="top: 2rem;">
                 <div class="position-relative d-inline-block mb-4">
-                    <div class="rounded-circle overflow-hidden border border-accent border-4" style="width: 150px; height: 150px;">
+                    <div class="rounded-circle overflow-hidden border border-accent border-4 shadow-lg" style="width: 160px; height: 160px; background: rgba(255,255,255,0.05);">
                         {% if profile_user.profile.avatar %}
                             <img src="{{ profile_user.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
                         {% else %}
-                            <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
-                                <i class="fas fa-user-circle fs-1 text-muted"></i>
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                <i class="fas fa-user-circle" style="font-size: 5rem;"></i>
                             </div>
                         {% endif %}
                     </div>
                     {% if profile_user.profile.is_verified %}
-                        <div class="position-absolute bottom-0 end-0 bg-primary rounded-circle p-2 border border-dark" title="Verified Trader">
-                            <i class="fas fa-check text-white small"></i>
+                        <div class="position-absolute bottom-0 end-0 bg-accent rounded-circle p-2 border border-dark shadow" title="Verified Trader">
+                            <i class="fas fa-check-circle text-dark"></i>
                         </div>
                     {% endif %}
                 </div>
 
                 <h2 class="fw-bold mb-1">{{ profile_user.username }}</h2>
-                <p class="text-muted small mb-4">Member since {{ profile_user.date_joined|date:"M Y" }}</p>
+                <p class="text-white-50 small mb-4"><i class="fas fa-calendar-alt me-2 x-small"></i>Member since {{ profile_user.date_joined|date:"M Y" }}</p>
 
-                <div class="d-flex justify-content-center gap-2 mb-4">
-                    {% for i in "12345" %}
-                        <i class="fas fa-star {% if forloop.counter <= avg_rating %}text-warning{% else %}text-secondary opacity-25{% endif %}"></i>
-                    {% endfor %}
-                    <span class="ms-2 fw-bold text-accent">{{ avg_rating|floatformat:1 }}</span>
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+                    <div class="glass-card px-3 py-2 d-flex gap-1 align-items-center" style="background: rgba(255,193,7,0.1); border-color: rgba(255,193,7,0.2);">
+                        {% for i in "12345" %}
+                            <i class="fas fa-star {% if forloop.counter <= avg_rating %}text-warning{% else %}text-secondary opacity-25{% endif %} small"></i>
+                        {% endfor %}
+                        <span class="ms-2 fw-bold text-warning">{{ avg_rating|floatformat:1 }}</span>
+                    </div>
                 </div>
 
                 {% if profile_user.profile.bio %}
-                    <p class="text-secondary italic mb-4">"{{ profile_user.profile.bio }}"</p>
+                    <div class="p-3 glass-card mb-4" style="background: rgba(255,255,255,0.02);">
+                        <p class="text-white-50 small mb-0 fst-italic">"{{ profile_user.profile.bio }}"</p>
+                    </div>
                 {% endif %}
 
                 {% if profile_user == user %}
-                    <a href="{% url 'edit_profile' %}" class="btn-premium d-block mb-2">Edit Profile</a>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_profile' %}" class="btn-premium py-3 fw-bold">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="btn glass-card border-0 py-2 text-white-50">Go to Dashboard</a>
+                    </div>
                 {% else %}
-                    <a href="{% url 'rate_user' profile_user.username %}" class="btn btn-outline-light rounded-pill w-100 mb-2 border-secondary">Rate Trader</a>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn-premium py-3 fw-bold pe-none opacity-50">
+                            <i class="fas fa-comments me-2"></i>Message Trader
+                        </a>
+                        <a href="{% url 'rate_user' profile_user.username %}" class="btn glass-card border-secondary py-2 text-white">Rate this User</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
 
-        <!-- Content Area -->
+        <!-- Main Content: Stats & Listings -->
         <div class="col-lg-8">
-            <!-- Stats -->
+            <!-- Stats Grid -->
             <div class="row g-4 mb-5">
                 <div class="col-sm-4">
-                    <div class="glass-card p-3 text-center">
-                        <h3 class="fw-bold mb-0">{{ user_products.count }}</h3>
-                        <p class="text-muted small mb-0">Listings</p>
+                    <div class="glass-card p-4 text-center hover-scale">
+                        <div class="bg-accent bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                            <i class="fas fa-tags text-accent fs-4"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 text-white">{{ user_products.count }}</h3>
+                        <p class="text-muted small mb-0 text-uppercase ls-1">Listings</p>
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="glass-card p-3 text-center">
-                        <h3 class="fw-bold mb-0">{{ ratings.count }}</h3>
-                        <p class="text-muted small mb-0">Reviews</p>
+                    <div class="glass-card p-4 text-center hover-scale">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                            <i class="fas fa-star text-info fs-4"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 text-white">{{ ratings.count }}</h3>
+                        <p class="text-muted small mb-0 text-uppercase ls-1">Reviews</p>
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="glass-card p-3 text-center">
-                        <h3 class="fw-bold mb-0">100%</h3>
-                        <p class="text-muted small mb-0">Response Rate</p>
+                    <div class="glass-card p-4 text-center hover-scale">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                            <i class="fas fa-bolt text-success fs-4"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 text-white">100%</h3>
+                        <p class="text-muted small mb-0 text-uppercase ls-1">Response Rate</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <ul class="nav nav-pills gap-3 mb-4" id="profileTabs">
-                <li class="nav-item">
-                    <button class="nav-link active rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#listings">Active Listings</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#reviews">Trader Reviews</button>
-                </li>
-            </ul>
+            <!-- Tabs Navigation -->
+            <div class="glass-card p-1 rounded-pill d-inline-flex mb-5">
+                <ul class="nav nav-pills gap-1" id="profileTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active rounded-pill px-5 py-2 fw-bold" data-bs-toggle="pill" data-bs-target="#listings">
+                            <i class="fas fa-th-large me-2"></i>Active Listings
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link rounded-pill px-5 py-2 fw-bold" data-bs-toggle="pill" data-bs-target="#reviews">
+                            <i class="fas fa-comments me-2"></i>Trader Reviews
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
             <div class="tab-content" id="profileTabsContent">
                 <!-- Listings Tab -->
                 <div class="tab-pane fade show active" id="listings">
-                    <div class="row g-3">
+                    <div class="row g-4">
                         {% for product in user_products %}
                             <div class="col-md-6">
                                 <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none">
-                                    <div class="glass-card overflow-hidden h-100 product-mini-card">
-                                        <div class="d-flex">
-                                            <div style="width: 100px; height: 100px;">
+                                    <div class="glass-card overflow-hidden h-100 hover-slide-up border-0">
+                                        <div class="position-relative">
+                                            <div style="height: 200px;">
                                                 {% if product.image %}
                                                     <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                                                {% else %}
+                                                    <div class="h-100 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-muted">
+                                                        <i class="fas fa-image fs-1"></i>
+                                                    </div>
                                                 {% endif %}
                                             </div>
-                                            <div class="p-3">
-                                                <h6 class="fw-bold mb-1 text-white">{{ product.name }}</h6>
-                                                <p class="text-accent small mb-0">{{ product.get_exchange_type_display }}</p>
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <span class="badge bg-blur text-accent border border-accent border-opacity-25 rounded-pill px-3">
+                                                    {{ product.category.name }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h5 class="fw-bold mb-0 text-white">{{ product.name }}</h5>
+                                                <i class="fas fa-chevron-right text-muted small mt-1"></i>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="text-accent small"><i class="fas fa-sync-alt me-1"></i>{{ product.get_exchange_type_display }}</span>
+                                                <span class="text-muted opacity-25">|</span>
+                                                <span class="text-white-50 small"><i class="fas fa-map-marker-alt me-1"></i>{{ product.location }}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                             </div>
                         {% empty %}
-                            <div class="col-12 text-center py-5 glass-card">
-                                <p class="text-muted mb-0">No active listings yet.</p>
+                            <div class="col-12 text-center py-5 glass-card border-dashed">
+                                <div class="bg-secondary bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                                    <i class="fas fa-box-open fs-1 text-muted"></i>
+                                </div>
+                                <h5 class="fw-bold text-white-50">No Listings Yet</h5>
+                                <p class="text-muted small">When {{ profile_user.username }} adds products, they will appear here.</p>
                             </div>
                         {% endfor %}
                     </div>
@@ -113,26 +164,41 @@
 
                 <!-- Reviews Tab -->
                 <div class="tab-pane fade" id="reviews">
-                    {% for rating in ratings %}
-                        <div class="glass-card p-4 mb-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <h6 class="fw-bold mb-0">{{ rating.rater.username }}</h6>
-                                    <div class="small">
-                                        {% for i in "12345" %}
-                                            <i class="fas fa-star {% if forloop.counter <= rating.score %}text-warning{% else %}text-secondary opacity-25{% endif %}"></i>
-                                        {% endfor %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for rating in ratings %}
+                            <div class="glass-card p-4 hover-slide-up">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle overflow-hidden bg-accent bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                            <span class="fw-bold text-accent">{{ rating.rater.username|first|upper }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-white">{{ rating.rater.username }}</h6>
+                                            <div class="small">
+                                                {% for i in "12345" %}
+                                                    <i class="fas fa-star {% if forloop.counter <= rating.score %}text-warning{% else %}text-secondary opacity-25{% endif %} x-small"></i>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
                                     </div>
+                                    <span class="text-muted small bg-secondary bg-opacity-10 px-3 py-1 rounded-pill">
+                                        {{ rating.created_at|date:"M d, Y" }}
+                                    </span>
                                 </div>
-                                <span class="text-muted small">{{ rating.created_at|date:"M d, Y" }}</span>
+                                <div class="p-3 glass-card bg-opacity-10" style="background: rgba(255,255,255,0.02);">
+                                    <p class="text-white-50 mb-0 small"><i class="fas fa-quote-left me-2 opacity-25"></i>{{ rating.comment }}</p>
+                                </div>
                             </div>
-                            <p class="text-secondary mb-0">"{{ rating.comment }}"</p>
-                        </div>
-                    {% empty %}
-                        <div class="text-center py-5 glass-card">
-                            <p class="text-muted mb-0">No reviews yet.</p>
-                        </div>
-                    {% endfor %}
+                        {% empty %}
+                            <div class="text-center py-5 glass-card border-dashed">
+                                <div class="bg-secondary bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                                    <i class="fas fa-comment-slash fs-1 text-muted"></i>
+                                </div>
+                                <h5 class="fw-bold text-white-50">No Reviews Yet</h5>
+                                <p class="text-muted small">{{ profile_user.username }} hasn't received any trades feedback yet.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
