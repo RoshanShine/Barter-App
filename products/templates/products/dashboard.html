@@ -3,7 +3,7 @@
 {% block title %}Dashboard | SwapHub Premium{% endblock %}
 
 {% block content %}
-<div class="animate-fade-in py-5">
+<div class="animate-fade-in py-5 px-3 px-md-5">
     <div class="bg-mesh"></div>
     
     <!-- Top Header -->
@@ -12,7 +12,7 @@
             <h1 class="display-5 fw-bold mb-1 text-white">My Dashboard</h1>
             <p class="text-white-50 mb-0 ls-1 fs-5">Manage your trades, offers, and <a href="{% url 'profile_view' user.username %}" class="text-accent text-decoration-none">public profile</a></p>
         </div>
-        <a href="{% url 'add_product' %}" class="btn-premium px-4 py-3 fw-bold decoration-none text-white d-flex align-items-center gap-2">
+        <a href="{% url 'add_product' %}" class="btn-premium px-4 py-3 fw-bold decoration-none text-white d-flex align-items-center gap-2 shadow-premium">
             <i class="fas fa-plus-circle fs-5"></i> Post New Listing
         </a>
     </div>
@@ -20,32 +20,52 @@
     <!-- Stats Overview Row -->
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <div class="glass-card p-4 d-flex align-items-center gap-4 hover-scale border-0" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
-                <div class="bg-accent bg-opacity-20 p-3 rounded-circle"><i class="fas fa-layer-group text-accent fs-4"></i></div>
-                <div><h3 class="fw-bold mb-0">{{ my_products.count }}</h3><p class="text-muted small text-uppercase ls-1 mb-0">Total Items</p></div>
+            <div class="glass-card p-4 d-flex align-items-center gap-3 hover-scale border-0" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
+                <div class="bg-accent bg-opacity-20 p-2 rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-layer-group text-accent fs-5"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 lh-1">{{ my_products.count }}</h3>
+                    <p class="text-muted small text-uppercase ls-1 mb-0">Total Items</p>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card p-4 d-flex align-items-center gap-4 hover-scale border-0" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
-                <div class="bg-warning bg-opacity-20 p-3 rounded-circle"><i class="fas fa-clock text-warning fs-4"></i></div>
-                <div><h3 class="fw-bold mb-0">{{ received_offers.count }}</h3><p class="text-muted small text-uppercase ls-1 mb-0">Inbox</p></div>
+            <div class="glass-card p-4 d-flex align-items-center gap-3 hover-scale border-0" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
+                <div class="bg-warning bg-opacity-20 p-2 rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-clock text-warning fs-5"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 lh-1">{{ received_offers.count }}</h3>
+                    <p class="text-muted small text-uppercase ls-1 mb-0">Inbox</p>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card p-4 d-flex align-items-center gap-4 hover-scale border-0" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
-                <div class="bg-success bg-opacity-20 p-3 rounded-circle"><i class="fas fa-check-circle text-success fs-4"></i></div>
-                <div><h3 class="fw-bold mb-0">12</h3><p class="text-muted small text-uppercase ls-1 mb-0">Deals Done</p></div>
+            <div class="glass-card p-4 d-flex align-items-center gap-3 hover-scale border-0" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255,255,255,0.02) 100%);">
+                <div class="bg-success bg-opacity-20 p-2 rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-check-circle text-success fs-5"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 lh-1">{{ deals_done_count }}</h3>
+                    <p class="text-muted small text-uppercase ls-1 mb-0">Deals Done</p>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card p-4 d-flex align-items-center gap-4 hover-scale border-0" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255,255,255,0.02) 100%);">
-                <div class="bg-white bg-opacity-10 p-3 rounded-circle"><i class="fas fa-heart text-danger fs-4"></i></div>
-                <div><h3 class="fw-bold mb-0">{{ wishlist_items.count }}</h3><p class="text-muted small text-uppercase ls-1 mb-0">Saved</p></div>
+            <div class="glass-card p-4 d-flex align-items-center gap-3 hover-scale border-0" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255,255,255,0.02) 100%);">
+                <div class="bg-white bg-opacity-10 p-2 rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-heart text-danger fs-5"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 lh-1">{{ wishlist_items.count }}</h3>
+                    <p class="text-muted small text-uppercase ls-1 mb-0">Saved</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-5">
+    <div class="row g-5 mt-4">
         <!-- Main Column (Left) -->
         <div class="col-lg-8">
             <!-- My Listings (PRIORITY 1) -->
@@ -103,6 +123,8 @@
                 </div>
             </section>
 
+            <div class="my-5 border-top border-white border-opacity-10 opacity-25"></div>
+
             <!-- Received Offers (PRIORITY 2) -->
             <section class="mb-5">
                 <h3 class="fw-bold mb-4 d-flex align-items-center gap-3">
@@ -126,7 +148,25 @@
                                             <div>
                                                 <h5 class="fw-bold mb-1 text-white">{{ offer.product.name }}</h5>
                                                 <p class="text-white-50 small mb-0"><i class="fas fa-user-circle me-1 opacity-50"></i>{{ offer.sender.username }} <span class="mx-2 opacity-10">|</span> <i class="fas fa-clock me-1 opacity-50"></i>{{ offer.created_at|timesince }} ago</p>
-                                                <div class="mt-2 glass-card p-3 py-2 bg-opacity-10 border-0" style="background: rgba(139, 92, 246, 0.05);">
+                                                <div class="mt-3 d-flex flex-wrap gap-2">
+                                                    {% if offer.offer_type == 'money' or offer.offer_type == 'both' %}
+                                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 px-3 py-2 rounded-pill x-small">
+                                                            <i class="fas fa-coins me-1"></i> Offered: ₹{{ offer.offered_price }}
+                                                        </span>
+                                                    {% endif %}
+                                                    {% if offer.offer_type == 'barter' or offer.offer_type == 'both' %}
+                                                        {% if offer.offered_product %}
+                                                            <a href="{% url 'product_detail' offer.offered_product.pk %}" class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-10 px-3 py-2 rounded-pill x-small text-decoration-none hover-scale">
+                                                                <i class="fas fa-exchange-alt me-1"></i> Swap: {{ offer.offered_product.name }}
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="badge bg-secondary bg-opacity-10 text-white-50 border border-secondary border-opacity-10 px-3 py-2 rounded-pill x-small">
+                                                                <i class="fas fa-exchange-alt me-1"></i> Product Trade
+                                                            </span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mt-3 glass-card p-3 py-2 bg-opacity-10 border-0" style="background: rgba(139, 92, 246, 0.05);">
                                                     <p class="mb-0 x-small text-accent fw-medium ls-1"><i class="fas fa-quote-left me-2 opacity-25"></i>{{ offer.message }}</p>
                                                 </div>
                                             </div>
@@ -138,11 +178,18 @@
                                                 <a href="{% url 'handle_offer' offer.pk 'accept' %}" class="btn btn-premium px-4 py-2 small fw-bold">Accept</a>
                                                 <a href="{% url 'handle_offer' offer.pk 'reject' %}" class="btn glass-card border-secondary text-white-50 px-4 py-2 small fw-bold">Decline</a>
                                             </div>
+                                        {% elif offer.status == 'accepted' and offer.thread %}
+                                            <div class="d-flex gap-2 justify-content-md-end align-items-center">
+                                                <a href="{% url 'chat_view' offer.thread.id %}" class="btn btn-premium px-4 py-2 small fw-bold">
+                                                    <i class="fas fa-comments me-2"></i>Open Chat
+                                                </a>
+                                                <span class="badge rounded-pill px-4 py-2 text-uppercase ls-1 x-small bg-success bg-opacity-10 text-success border border-success border-opacity-20">
+                                                    Accepted
+                                                </span>
+                                            </div>
                                         {% else %}
-                                            <span class="badge rounded-pill px-4 py-2 text-uppercase ls-1 x-small 
-                                                {% if offer.status == 'accepted' %}bg-success bg-opacity-10 text-success border-success border-opacity-20
-                                                {% else %}bg-danger bg-opacity-10 text-danger border-danger border-opacity-20{% endif %} border">
-                                                {{ offer.status }}
+                                            <span class="badge rounded-pill px-4 py-2 text-uppercase ls-1 x-small bg-danger bg-opacity-10 text-danger border border-danger border-opacity-20">
+                                                Rejected
                                             </span>
                                         {% endif %}
                                     </div>
@@ -156,6 +203,8 @@
                     {% endif %}
                 </div>
             </section>
+
+            <div class="my-5 border-top border-white border-opacity-10 opacity-25"></div>
 
             <!-- Sent Proposals (PRIORITY 3) -->
             <section>
@@ -180,12 +229,24 @@
                                         <p class="text-white-50 x-small mb-0">Sent to <span class="text-accent">{{ offer.product.user.username }}</span></p>
                                     </div>
                                     <div class="col-auto text-end">
-                                        <span class="badge rounded-pill x-small px-3 border border-opacity-20
-                                            {% if offer.status == 'pending' %}bg-warning bg-opacity-10 text-warning border-warning
-                                            {% elif offer.status == 'accepted' %}bg-success bg-opacity-10 text-success border-success
-                                            {% else %}bg-danger bg-opacity-10 text-danger border-danger{% endif %} text-uppercase ls-1">
-                                            {{ offer.status }}
-                                        </span>
+                                        <div class="d-flex flex-column align-items-end gap-2">
+                                            <span class="badge rounded-pill x-small px-3 border border-opacity-20
+                                                {% if offer.status == 'pending' %}bg-warning bg-opacity-10 text-warning border-warning
+                                                {% elif offer.status == 'accepted' %}bg-success bg-opacity-10 text-success border-success
+                                                {% else %}bg-danger bg-opacity-10 text-danger border-danger{% endif %} text-uppercase ls-1">
+                                                {{ offer.status }}
+                                            </span>
+                                            {% if offer.status == 'accepted' and offer.thread %}
+                                                <a href="{% url 'chat_view' offer.thread.id %}" class="text-accent x-small fw-bold text-decoration-none hover-white">
+                                                    <i class="fas fa-comments me-1"></i> Go to Chat
+                                                </a>
+                                            {% endif %}
+                                            <div class="x-small text-white-50">
+                                                {% if offer.offer_type == 'money' %}₹{{ offer.offered_price }}
+                                                {% elif offer.offer_type == 'barter' %}Trade
+                                                {% else %}Trade + ₹{{ offer.offered_price }}{% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

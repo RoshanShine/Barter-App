@@ -19,19 +19,22 @@
         letter-spacing: 1px;
     }
     form p input {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+        border-radius: 14px;
         color: white;
-        padding: 0.8rem 1.2rem;
+        padding: 0.9rem 1.4rem;
         width: 100%;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     form p input:focus {
         background: rgba(255, 255, 255, 0.08);
         border-color: var(--accent);
         outline: none;
-        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.1);
+        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15), 0 20px 40px -10px rgba(0,0,0,0.3);
+        transform: translateY(-2px);
     }
     .helptext {
         display: block;

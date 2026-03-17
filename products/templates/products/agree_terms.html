@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Chat Terms & Conditions | SwapHub{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="glass-card p-5 shadow-premium border-0">
+                <div class="text-center mb-5">
+                    <div class="bg-accent bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4">
+                        <i class="fas fa-shield-alt fs-1 text-accent"></i>
+                    </div>
+                    <h2 class="fw-bold mb-3 ls-1">Safe Barter Protocol</h2>
+                    <p class="text-muted small">Agreement required before initiating contact</p>
+                </div>
+
+                <div class="terms-content mb-5 text-white-50 small pe-3" style="max-height: 300px; overflow-y: auto;">
+                    <p class="mb-4">Welcome to the SwapHub Premium Chat. To ensure a safe and professional environment for all traders, please adhere to the following policies:</p>
+                    
+                    <h6 class="text-white fw-bold mb-3">1. Professional Conduct</h6>
+                    <p class="mb-4">Maintain a respectful and professional tone at all times. Any form of harassment, hate speech, or abuse will result in an immediate and permanent ban.</p>
+                    
+                    <h6 class="text-white fw-bold mb-3">2. Authentic Listings</h6>
+                    <p class="mb-4">You agree that the product you are offering is exactly as described in your listing. Misrepresentation of items is strictly prohibited.</p>
+                    
+                    <h6 class="text-white fw-bold mb-3">3. Anti-Spam Policy</h6>
+                    <p class="mb-4">Do not use the chat system to send unsolicited promotional material, junk mail, or spam. Conversations must be limited to the specific trade at hand.</p>
+                    
+                    <h6 class="text-white fw-bold mb-3">4. Security Oversight</h6>
+                    <p class="mb-4">For the safety of our community, all chats are recorded and may be reviewed by SwapHub administrators to resolve disputes or investigate reported issues.</p>
+                </div>
+
+                <form method="post" action="{% url 'agree_terms' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="thread_id" value="{{ thread_id }}">
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <div class="mb-4 d-flex align-items-start gap-3 p-3 glass-card bg-opacity-10 border-white border-opacity-10">
+                        <input type="checkbox" id="agree" class="mt-1" required>
+                        <label for="agree" class="small text-muted cursor-pointer">I have read and agree to the Safe Barter Protocol and understand that my conversations are recorded for security purposes.</label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn-premium py-3 fs-5">
+                            Agree and Enter Chat <i class="fas fa-arrow-right ms-2 small"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'dashboard' %}" class="text-muted small text-decoration-none hover-white">Cancel and Return to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .terms-content::-webkit-scrollbar { width: 4px; }
+    .terms-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    input[type="checkbox"] {
+        accent-color: var(--accent);
+        width: 18px;
+        height: 18px;
+    }
+</style>
+{% endblock %}

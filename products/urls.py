@@ -11,6 +11,8 @@ urlpatterns = [
     path('make-offer/<str:pk>/', views.make_offer, name='make_offer'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('handle-offer/<str:pk>/<action>/', views.handle_offer, name='handle_offer'),
+    path('chat/<int:thread_id>/', views.chat_view, name='chat_view'),
+    path('agree-terms/', views.agree_terms, name='agree_terms'),
     path('product/<str:pk>/edit/', views.edit_product, name='edit_product'),
     path('product/<str:pk>/delete/', views.delete_product, name='delete_product'),
 
@@ -21,6 +23,10 @@ urlpatterns = [
     path('profile-edit/notifications/', views.settings_notifications, name='settings_notifications'),
     path('rate/<str:username>/', views.rate_user, name='rate_user'),
     path('wishlist-toggle/<str:pk>/', views.toggle_wishlist, name='toggle_wishlist'),
+    
+    # Notifications List
+    path('notifications/', views.notifications_list, name='notifications_list'),
+    path('notifications/mark-as-read/<int:pk>/', views.mark_notification_as_read, name='mark_notification_as_read'),
 
     path(
         'login/',

@@ -1,19 +1,13 @@
 from django.contrib import admin
-from .models import Product, Profile, Rating, Wishlist, ProductImage, Offer
-
-class NoLogMixin:
-    """Mixin to disable admin logging because LogEntry fails with MongoDB ObjectIds"""
-    def log_addition(self, *args, **kwargs): pass
-    def log_change(self, *args, **kwargs): pass
-    def log_deletion(self, *args, **kwargs): pass
+from .models import Product, Profile, Rating, Wishlist, ProductImage, Offer, Thread, Message
 
 @admin.register(Profile)
-class ProfileAdmin(NoLogMixin, admin.ModelAdmin):
-    list_display = ('user', 'is_verified', 'created_at')
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'is_verified', 'has_agreed_to_terms', 'created_at')
     search_fields = ('user__username', 'bio')
 
 @admin.register(Product)
-class ProductAdmin(NoLogMixin, admin.ModelAdmin):
+class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'category', 'exchange_type', 'is_approved')
     list_filter = ('category', 'exchange_type', 'is_approved')
     list_editable = ('is_approved',)
@@ -28,19 +22,37 @@ class ProductAdmin(NoLogMixin, admin.ModelAdmin):
         queryset.update(is_approved=False)
 
 @admin.register(Offer)
-class OfferAdmin(NoLogMixin, admin.ModelAdmin):
+class OfferAdmin(admin.ModelAdmin):
     list_display = ('product', 'sender', 'status', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('product__name', 'sender__username', 'message')
 
 @admin.register(Rating)
-class RatingAdmin(NoLogMixin, admin.ModelAdmin):
-    pass
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ('rater', 'rated_user', 'score', 'created_at')
 
 @admin.register(Wishlist)
-class WishlistAdmin(NoLogMixin, admin.ModelAdmin):
-    pass
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'added_at')
+
+class MessageInline(admin.TabularInline):
+    model = Message
+    extra = 0
+    readonly_fields = ('sender', 'text', 'timestamp')
+    can_delete = False
+
+@admin.register(Thread)
+class ThreadAdmin(admin.ModelAdmin):
+    list_display = ('id', 'offer', 'created_at')
+    filter_horizontal = ('participants',)
+    inlines = [MessageInline]
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'thread', 'timestamp')
+    list_filter = ('timestamp', 'sender')
+    search_fields = ('text', 'sender__username')
 
 @admin.register(ProductImage)
-class ProductImageAdmin(NoLogMixin, admin.ModelAdmin):
+class ProductImageAdmin(admin.ModelAdmin):
     pass

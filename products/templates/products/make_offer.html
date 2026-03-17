@@ -8,24 +8,54 @@
         <div class="col-lg-8">
             <div class="glass-card overflow-hidden">
                 <div class="row g-0">
-                    <div class="col-md-5 d-none d-md-block">
+                    <div class="col-md-5 d-none d-md-block p-4">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            <div class="h-100 w-100 rounded-4 overflow-hidden shadow-premium">
+                                <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            </div>
                         {% else %}
-                            <div class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center">
+                            <div class="w-100 h-100 bg-secondary bg-opacity-10 rounded-4 d-flex align-items-center justify-content-center">
                                 <i class="fas fa-image fs-1 text-muted"></i>
                             </div>
                         {% endif %}
                     </div>
-                    <div class="col-md-7 p-5">
+                    <div class="col-md-7 p-4 p-lg-5">
                         <h2 class="fw-bold mb-2">Propose a Trade</h2>
-                        <p class="text-muted mb-4">You are making an offer to <strong>@{{ product.user.username }}</strong> for <strong>{{ product.name }}</strong>.</p>
+                        <p class="text-muted small mb-4">You are making an offer to <strong class="text-accent">@{{ product.user.username }}</strong> for <strong>{{ product.name }}</strong>.</p>
                         
-                        <form method="post">
+                        <form method="post" id="offerForm">
                             {% csrf_token %}
+                            
                             <div class="mb-4">
-                                <label class="form-label text-white fw-semibold small text-uppercase">Your Barter Message</label>
-                                <textarea name="message" class="form-control glass-card text-white border-0 p-4" rows="5" placeholder="Describe what you want to exchange or your proposal details..." required></textarea>
+                                <label class="form-label text-white fw-semibold small text-uppercase">Exchange Method</label>
+                                <select name="offer_type" id="offerType" class="form-select glass-card text-white border-0 p-3 mb-3" required onchange="toggleFields()">
+                                    <option value="barter">Barter (Exchange Product)</option>
+                                    <option value="money">Money (Direct Purchase)</option>
+                                    <option value="both">Both (Money + Product)</option>
+                                </select>
+                            </div>
+
+                            <!-- Money Option -->
+                            <div id="moneyField" class="mb-4" style="display: none;">
+                                <label class="form-label text-white fw-semibold small text-uppercase">Offered Price (₹)</label>
+                                <input type="number" name="offered_price" class="form-control glass-card text-white border-0 p-3" placeholder="Enter amount...">
+                            </div>
+
+                            <!-- Barter Option -->
+                            <div id="barterField" class="mb-4">
+                                <label class="form-label text-white fw-semibold small text-uppercase">Select Your Product to Exchange</label>
+                                <select name="offered_product" class="form-select glass-card text-white border-0 p-3">
+                                    <option value="">-- Choose one of your listings --</option>
+                                    {% for p in user_products %}
+                                        <option value="{{ p.id }}">{{ p.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i>You can only exchange products you have already listed.</p>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label text-white fw-semibold small text-uppercase">Your Message</label>
+                                <textarea name="message" class="form-control glass-card text-white border-0 p-4" rows="4" placeholder="Describe your proposal details..." required></textarea>
                             </div>
                             
                             <div class="d-grid gap-3">
@@ -33,13 +63,34 @@
                                     <i class="fas fa-paper-plane me-2"></i>Send Offer
                                 </button>
                                 <a href="{% url 'product_detail' product.pk %}" class="btn btn-link text-muted text-decoration-none text-center">
-                                    Cancel and Return
+                                    Cancel
                                 </a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+            
+            <script>
+                function toggleFields() {
+                    const type = document.getElementById('offerType').value;
+                    const moneyField = document.getElementById('moneyField');
+                    const barterField = document.getElementById('barterField');
+                    
+                    if (type === 'money') {
+                        moneyField.style.display = 'block';
+                        barterField.style.display = 'none';
+                    } else if (type === 'barter') {
+                        moneyField.style.display = 'none';
+                        barterField.style.display = 'block';
+                    } else {
+                        moneyField.style.display = 'block';
+                        barterField.style.display = 'block';
+                    }
+                }
+                // Initialize
+                window.onload = toggleFields;
+            </script>
             
             <div class="mt-4 p-4 glass-card border-accent border-opacity-25" style="border-style: dashed;">
                 <h6 class="text-accent fw-bold"><i class="fas fa-lightbulb me-2"></i>Barter Tip</h6>

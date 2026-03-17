@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Chat with @{{ other_user.username }} | SwapHub{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Chat Header -->
+            <div class="glass-card p-4 mb-4 border-0 shadow-premium d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{% url 'dashboard' %}" class="btn glass-card border-0 p-2 text-muted hover-white me-2">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="position-relative">
+                        <div class="rounded-circle overflow-hidden shadow-sm" style="width: 45px; height: 45px; border: 2px solid rgba(34, 211, 238, 0.2);">
+                            {% if other_user.profile.avatar %}
+                                <img src="{{ other_user.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 h-100 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-muted">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" style="width: 12px; height: 12px;"></div>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-white">@{{ other_user.username }}</h5>
+                        <p class="text-muted x-small mb-0 ls-1 text-uppercase">Negotiating: {{ thread.offer.product.name }}</p>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn glass-card border-0 p-2 text-muted hover-accent" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark glass-card border-white border-opacity-10">
+                        <li><a class="dropdown-item x-small" href="{% url 'profile_view' other_user.username %}"><i class="fas fa-user-circle me-2"></i>View Profile</a></li>
+                        <li><a class="dropdown-item x-small" href="{% url 'product_detail' thread.offer.product.pk %}"><i class="fas fa-shopping-bag me-2"></i>View Product</a></li>
+                        <li><hr class="dropdown-divider opacity-10"></li>
+                        <li><a class="dropdown-item x-small text-danger" href="#"><i class="fas fa-flag me-2"></i>Report User</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="glass-card mb-4 border-0 shadow-premium overflow-hidden d-flex flex-column" style="height: 70vh; background: rgba(15, 23, 42, 0.6);">
+                <!-- Product Summary Info (Sticky) -->
+                <div class="p-3 border-bottom border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.03);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="small fw-bold text-accent ls-1 text-uppercase">Exchange Proposal</div>
+                        <div class="badge bg-accent bg-opacity-10 text-accent border border-accent border-opacity-20 x-small px-3">{{ thread.offer.get_offer_type_display }}</div>
+                    </div>
+                </div>
+
+                <div class="chat-body p-4 flex-grow-1 overflow-y-auto d-flex flex-column gap-3">
+                    <!-- Initial Offer Message -->
+                    <div class="text-center my-4">
+                        <span class="badge bg-dark bg-opacity-50 text-muted px-4 py-2 rounded-pill x-small border border-white border-opacity-10">
+                            <i class="fas fa-handshake me-2"></i>Offer accepted on {{ thread.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+
+                    <div class="message-wrapper d-flex gap-3 mb-4">
+                         <div class="rounded-circle overflow-hidden shadow-sm" style="width: 36px; height: 36px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);">
+                            {% if thread.offer.sender.profile.avatar %}
+                                <img src="{{ thread.offer.sender.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}<div class="w-100 h-100 bg-secondary bg-opacity-20 d-flex align-items-center justify-content-center text-muted-50 small"><i class="fas fa-user"></i></div>{% endif %}
+                        </div>
+                        <div class="glass-card p-3 border-0" style="background: rgba(139, 92, 246, 0.15); border-radius: 0 20px 20px 20px; max-width: 80%; border: 1px solid rgba(139, 92, 246, 0.2) !important;">
+                            <p class="mb-2 small text-white opacity-90">{{ thread.offer.message }}</p>
+                            <div class="x-small text-accent fw-bold ls-1 text-uppercase">
+                                {% if thread.offer.offer_type == 'money' %}
+                                    <i class="fas fa-coins me-1"></i> PAYING: ₹{{ thread.offer.offered_price }}
+                                {% elif thread.offer.offer_type == 'barter' %}
+                                    <i class="fas fa-exchange-alt me-1"></i> SWAP: {{ thread.offer.offered_product.name|default:"[Product Removed]" }}
+                                {% else %}
+                                    <i class="fas fa-plus-circle me-1"></i> SWAP + ₹{{ thread.offer.offered_price }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for msg in chat_messages %}
+                        <div class="message-wrapper d-flex gap-3 {% if msg.sender == request.user %}justify-content-end{% endif %}">
+                            {% if msg.sender != request.user %}
+                                <div class="rounded-circle overflow-hidden shadow-sm align-self-end" style="width: 36px; height: 36px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);">
+                                    {% if msg.sender.profile.avatar %}
+                                        <img src="{{ msg.sender.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
+                                    {% else %}<div class="w-100 h-100 bg-secondary bg-opacity-20 d-flex align-items-center justify-content-center text-muted-50 small"><i class="fas fa-user"></i></div>{% endif %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="glass-card p-3 shadow-premium border-0 {% if msg.sender == request.user %}msg-sent bg-accent bg-opacity-20{% else %}msg-received bg-white bg-opacity-10{% endif %}" 
+                                style="max-width: 75%; min-width: 120px; border: 1px solid rgba(255,255,255,0.05) !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="x-small text-muted-50 fw-bold">@{{ msg.sender.username }}</span>
+                                    <span class="x-small text-muted opacity-40">{{ msg.timestamp|time:"H:i" }}</span>
+                                </div>
+                                <p class="mb-0 small text-white opacity-90">{{ msg.text }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Input area -->
+                <div class="p-4 border-top border-white border-opacity-10" style="background: rgba(0, 0, 0, 0.4);">
+                    <form method="post" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <div class="flex-grow-1 position-relative">
+                            <input type="text" name="text" class="form-control glass-card border-white border-opacity-10 text-white p-3 ps-4 pe-5" 
+                                   style="background: rgba(255,255,255,0.05);"
+                                   placeholder="Type your message..." autocomplete="off" required>
+                            <div class="position-absolute end-0 top-50 translate-middle-y pe-3 text-muted opacity-50">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-premium px-4 shadow-accent">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatBody = document.querySelector('.chat-body');
+    if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+</script>
+
+<style>
+    .chat-body::-webkit-scrollbar { width: 5px; }
+    .chat-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .chat-body::-webkit-scrollbar-track { background: transparent; }
+    
+    .msg-sent { border-radius: 20px 20px 0 20px !important; background: rgba(139, 92, 246, 0.2) !important; }
+    .msg-received { border-radius: 0 20px 20px 20px !important; background: rgba(255, 255, 255, 0.08) !important; }
+    .text-muted-50 { color: rgba(255,255,255,0.5); font-size: 0.7rem; }
+    .shadow-accent { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+</style>
+{% endblock %}

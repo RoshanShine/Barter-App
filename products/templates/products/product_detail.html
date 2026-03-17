@@ -19,12 +19,12 @@
 
     <div class="row g-5">
         <!-- Image Section -->
-        <div class="col-lg-7">
-            <div class="glass-card p-2 overflow-hidden" style="height: 500px;">
+        <div class="col-lg-7 text-center">
+            <div class="glass-card p-2 overflow-hidden d-inline-block shadow-premium border-0" style="background: rgba(255,255,255,0.03);">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 rounded-4" style="object-fit: cover;">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded-4" style="max-height: 75vh; width: auto; display: block; margin: 0 auto;">
                 {% else %}
-                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle rounded-4">
+                    <div class="d-flex align-items-center justify-content-center bg-secondary-subtle rounded-4" style="width: 400px; height: 400px; max-width: 100%;">
                         <i class="fas fa-image fs-1 text-muted"></i>
                     </div>
                 {% endif %}
@@ -108,12 +108,20 @@
                 <div class="d-grid gap-3">
                     {% if user.is_authenticated %}
                             {% if product.user != user %}
-                                <a href="tel:{{ product.phone }}" class="btn-premium text-center fs-5">
-                                    <i class="fas fa-phone-alt me-2"></i>Contact Owner
-                                </a>
-                                <a href="{% url 'make_offer' product.pk %}" class="btn btn-outline-light rounded-pill py-3 border-secondary fw-bold">
-                                    <i class="fas fa-paper-plane me-2"></i>Make an Offer
-                                </a>
+                                <div class="d-grid gap-3">
+                                    {% if user.profile.has_agreed_to_terms %}
+                                        <a href="tel:{{ product.phone }}" class="btn-premium text-center fs-5">
+                                            <i class="fas fa-phone-alt me-2"></i>Call Owner ({{ product.phone }})
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'agree_terms' %}?next={{ request.path }}" class="btn-premium text-center fs-5">
+                                            <i class="fas fa-shield-alt me-2"></i>Agree to Terms to Contact
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'make_offer' product.pk %}" class="btn btn-outline-light rounded-pill py-3 border-secondary fw-bold">
+                                        <i class="fas fa-paper-plane me-2"></i>Make an Offer
+                                    </a>
+                                </div>
                             {% else %}
                                 <div class="d-grid gap-3">
                                     <a href="{% url 'edit_product' product.pk %}" class="btn-premium text-center fs-5">
@@ -137,6 +145,53 @@
                         </a>
                     {% endif %}
                 </div>
+
+                <!-- Owner/Admin: Active Negotiations -->
+                {% if user == product.user or user.is_superuser %}
+                    <div class="mt-5 p-4 glass-card border-accent border-opacity-20 shadow-premium" style="background: rgba(139, 92, 246, 0.03);">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <h6 class="text-accent text-uppercase small fw-bold mb-0">
+                                <i class="fas fa-comments me-2"></i>{% if user.is_superuser %}Admin: Manage Chats{% else %}Active Negotiations{% endif %}
+                            </h6>
+                            <span class="badge bg-accent bg-opacity-10 text-accent x-small">{{ product.offers.all|length }} Total Offers</span>
+                        </div>
+                        
+                        <div class="d-flex flex-column gap-3">
+                            {% for offer in product.offers.all %}
+                                {% if offer.status == 'accepted' and offer.thread %}
+                                    <div class="p-3 glass-card bg-opacity-10 border-0 hover-scale" style="background: rgba(255,255,255,0.02);">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="rounded-circle overflow-hidden shadow-sm" style="width: 35px; height: 35px; border: 1px solid rgba(255,255,255,0.1);">
+                                                    {% if offer.sender.profile.avatar %}
+                                                        <img src="{{ offer.sender.profile.avatar.url }}" class="w-100 h-100" style="object-fit: cover;">
+                                                    {% else %}
+                                                        <div class="w-100 h-100 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-muted x-small"><i class="fas fa-user"></i></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <p class="mb-0 small text-white fw-bold">@{{ offer.sender.username }}</p>
+                                                    <p class="x-small text-muted mb-0">
+                                                        {% if offer.offer_type == 'money' %}₹{{ offer.offered_price }}
+                                                        {% elif offer.offer_type == 'barter' %}Swap: {{ offer.offered_product.name|truncatechars:15 }}
+                                                        {% else %}Trade + ₹{{ offer.offered_price }}{% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'chat_view' offer.thread.id %}" class="btn glass-card border-accent text-accent px-4 py-2 x-small fw-bold">
+                                                Open Chat
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if not product.offers.all %}
+                                <p class="text-muted small text-center my-3 opacity-50">No offers have been accepted yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
